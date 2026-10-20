@@ -3,81 +3,161 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Live System Status</title>
+    <title>ROBLOX - System Status</title>
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f4f5f7; color: #333; max-width: 600px; margin: 40px auto; padding: 20px; }
-        h1 { font-size: 24px; margin-bottom: 5px; }
-        .subtitle { color: #6b778c; font-size: 14px; margin-bottom: 25px; }
-        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
-        .system-row { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; }
-        .status-info { display: flex; flex-direction: column; align-items: flex-end; }
-        .status-badge { padding: 4px 10px; border-radius: 12px; font-size: 13px; font-weight: bold; text-transform: uppercase; }
-        .ms-delay { font-size: 11px; color: #6b778c; margin-top: 4px; }
+        body { font-family: Arial, Helvetica, sans-serif; background-color: #E3E3E3; margin: 0; padding: 0; color: #333; }
         
-        .operational { background: #e6f6ec; color: #00875a; }
-        .slow { background: #fffae6; color: #ffab00; }
-        .outage { background: #ffebe6; color: #de350b; }
+        .roblox-header { background-color: #002D62; border-bottom: 3px solid #001F42; padding: 8px 20px; display: flex; align-items: center; justify-content: space-between; }
+        .logo-text { color: #E11C1C; font-weight: 900; font-size: 26px; letter-spacing: -1px; font-style: italic; text-shadow: 1px 1px 0px #FFF; cursor: default; }
+        .logo-text span { color: #FFF; text-shadow: none; font-style: normal; }
+        .nav-links { color: #FFF; font-size: 13px; font-weight: bold; }
+        .nav-links span { margin-right: 15px; cursor: pointer; color: #DDD; }
+        .nav-links span:hover { color: #FFF; text-decoration: underline; }
+
+        .page-container { max-width: 1050px; margin: 20px auto; display: flex; gap: 20px; padding: 0 10px; }
+        
+        .sidebar { width: 160px; display: flex; flex-direction: column; gap: 4px; }
+        .sidebar-item { background: #EFEFEF; border: 1px solid #CCC; padding: 8px 12px; font-size: 13px; font-weight: bold; color: #111; text-decoration: none; border-radius: 3px; cursor: pointer;}
+        .sidebar-item:hover { background: #DDD; }
+        .sidebar-active { background: #0055AA !important; color: white !important; border: 1px solid #004488; }
+
+        .main-content { flex-grow: 1; display: flex; flex-direction: column; gap: 15px; }
+
+        .roblox-card { background: white; border: 1px solid #B7B7B7; border-radius: 4px; padding: 15px; box-shadow: 1px 1px 3px rgba(0,0,0,0.1); }
+        .card-title { font-size: 18px; font-weight: bold; color: #222; margin-top: 0; margin-bottom: 12px; border-bottom: 1px dashed #CCC; padding-bottom: 5px; }
+
+        .status-row { display: flex; justify-content: space-between; align-items: center; background: #F7F7F7; border: 1px solid #DDD; padding: 12px; border-radius: 4px; }
+        .server-title { font-size: 16px; font-weight: bold; }
+        .server-url { font-size: 11px; color: #666; margin-top: 3px; }
+        
+        .badge { padding: 5px 12px; font-size: 12px; font-weight: bold; border-radius: 3px; border: 1px solid; text-transform: uppercase; }
+        .badge-good { background: #E2F0D9; color: #385723; border-color: #A9D18E; }
+        .badge-slow { background: #FFF2CC; color: #7F6000; border-color: #FFD966; }
+        .badge-dead { background: #FCE4D6; color: #C65911; border-color: #F4B183; }
+
+        .feed-update { font-size: 13px; border-bottom: 1px solid #EEE; padding: 8px 0; }
+        .feed-update:last-child { border-bottom: none; }
+        .feed-time { font-size: 11px; color: #777; font-weight: normal; }
+
+        .games-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 15px; }
+        .game-thumb { border: 1px solid #CCC; background: #F9F9F9; padding: 6px; text-align: center; border-radius: 3px; font-size: 12px; font-weight: bold; }
+        .game-img-placeholder { width: 100%; height: 90px; background: #DDD; margin-bottom: 5px; display: flex; align-items: center; justify-content: center; color: #888; font-size: 10px; border: 1px solid #BBB; }
+        
+
+        .banner-ad { background: #FFF; border: 1px solid #BBB; text-align: center; padding: 10px; font-size: 11px; color: #777; font-weight: bold; }
+        .ad-box { background: #718093; color: white; height: 60px; display: flex; align-items: center; justify-content: center; font-size: 16px; margin-top: 5px; border-radius: 3px; border: 1px solid #485460; font-style: italic; }
     </style>
 </head>
 <body>
 
-    <h1>System Status</h1>
-    <div class="subtitle">Checking live status every 10 seconds...</div>
+    <div class="roblox-header">
+        <div class="logo-text">BLOXTIP<span>_STATUS</span></div>
+        <div class="nav-links">
+            <span>Games</span>
+            <span>Catalog</span>
+            <span>Develop</span>
+            <span>Robux</span>
+        </div>
+    </div>
 
-    <div class="card">
-        <div class="system-row">
-            <div>
-                <strong style="font-size: 18px;">Main Website</strong>
-                <div style="font-size: 12px; color: #6b778c;" id="web-url">Loading...</div>
+    <div class="page-container">
+        
+        <div class="sidebar">
+            <div class="sidebar-item sidebar-active">Home</div>
+            <div class="sidebar-item">Profile</div>
+            <div class="sidebar-item">Messages</div>
+            <div class="sidebar-item">Character</div>
+            <div class="sidebar-item">Lists</div>
+        </div>
+
+        <div class="main-content">
+            
+            <div class="roblox-card">
+                <h2 class="card-title">Live Server Tracking Monitor</h2>
+                <div class="status-row">
+                    <div>
+                        <div class="server-title">Bloxtip Core Gateway</div>
+                        <div class="server-url" id="web-url">Loading domain connection endpoint...</div>
+                    </div>
+                    <div style="text-align: right;">
+                        <span id="status-badge" class="badge badge-good">Pinging...</span>
+                        <div id="ping-time" style="font-size: 11px; color: #666; margin-top: 5px;">-- ms</div>
+                    </div>
+                </div>
             </div>
-            <div class="status-info">
-                <span id="status-badge" class="status-badge operational">Checking...</span>
-                <span id="ping-time" class="ms-delay">-- ms</span>
+
+            <div class="roblox-card">
+                <h2 class="card-title">My System Feed & Incident Log</h2>
+                <div class="feed-update">
+                    <strong>[System Note]</strong> Maintenance finished. Shifting servers back online. <span class="feed-time">10 mins ago</span>
+                </div>
+                <div class="feed-update">
+                    <strong>[Alert Log]</strong> Detected latency spike caused by unexpected database data loads. <span class="feed-time">1 hour ago</span>
+                </div>
             </div>
+
+            <div class="roblox-card">
+                <h2 class="card-title">Featured Nodes Performance Overview</h2>
+                <div class="games-grid">
+                    <div class="game-thumb">
+                        <div class="game-img-placeholder" style="background: #D4EDDA; color: #155724;">100% OK</div>
+                        Authentication
+                    </div>
+                    <div class="game-thumb">
+                        <div class="game-img-placeholder" style="background: #D4EDDA; color: #155724;">100% OK</div>
+                        DataStore API
+                    </div>
+                    <div class="game-thumb">
+                        <div class="game-img-placeholder" style="background: #D4EDDA; color: #155724;">100% OK</div>
+                        Asset Fetcher
+                    </div>
+                    <div class="game-thumb">
+                        <div class="game-img-placeholder" style="background: #FFF3CD; color: #856404;">LAGGING</div>
+                        Chat Server
+                    </div>
+                </div>
+            </div>
+
+            <div class="banner-ad">
+                Report Advertisement
+                <div class="ad-box">BUILD MILLIONS OF BUILDERS! PLAY FOR FREE NOW!</div>
+            </div>
+
         </div>
     </div>
 
     <script>
-        const TARGET_URL = 'https://amr010920.github.io/bloxtip/';
+        const TARGET_URL = 'https://amr010920.github.io/bloxtip/'; 
 
         document.getElementById('web-url').innerText = TARGET_URL;
 
         async function checkWebsiteLive() {
             const badge = document.getElementById('status-badge');
             const pingText = document.getElementById('ping-time');
-            
             const startTime = performance.now();
 
             try {
                 const uniqueUrl = `${TARGET_URL}?t=${Date.now()}`;
+                await fetch(uniqueUrl, { mode: 'no-cors', cache: 'no-store' });
                 
-                await fetch(uniqueUrl, { 
-                    mode: 'no-cors',
-                    cache: 'no-store'
-                });
-
-                const endTime = performance.now();
-                const duration = Math.round(endTime - startTime);
-
-                pingText.innerText = `${duration} ms response`;
+                const duration = Math.round(performance.now() - startTime);
+                pingText.innerText = `${duration} ms latency`;
 
                 if (duration > 1500) { 
-                    badge.innerText = "Slow Connection";
-                    badge.className = "status-badge slow";
+                    badge.innerText = "Slow Delay";
+                    badge.className = "badge badge-slow";
                 } else {
                     badge.innerText = "Operational";
-                    badge.className = "status-badge operational";
+                    badge.className = "badge badge-good";
                 }
-
             } catch (error) {
-                badge.innerText = "Major Outage";
-                badge.className = "status-badge outage";
-                pingText.innerText = "Offline";
+                badge.innerText = "Offline / Down";
+                badge.className = "badge badge-dead";
+                pingText.innerText = "Connection Broken";
             }
         }
 
         checkWebsiteLive();
-
         setInterval(checkWebsiteLive, 10000);
     </script>
 </body>
